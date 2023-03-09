@@ -1,29 +1,33 @@
 package org.example;
 
 public class User {
-    String login;
-    String password;
+    private String login;
+    private String password;
 
-    public String getLogin(String login) {
-        if (!login.contains("@") || !login.contains(".")) {
-            return "Login is not correct";
-        }
+
+    public String getLogin() {
         return login;
     }
 
-    public String getPassword(String password, String login) {
-        if (password.equals(login)) {
-            return "Password and Login must be different";
-        }
+
+    public String getPassword() {
         return password;
     }
 
     public User(String login, String password) {
-        this.login = login;
-        this.password = password;
+        if (password.equals(login)) {
+            throw new RuntimeException("Password and Login must be different");
+        } else {
+            this.login = login;
+        }
     }
 
-    public User() {
+    public User(String login) {
+        if (!login.contains("@") || !login.contains(".")) {
+            throw new RuntimeException("Login is not correct");
+        } else {
+            this.login = login;
+        }
     }
 
     public String getCredentials(String login, String password) {

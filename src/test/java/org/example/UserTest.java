@@ -1,6 +1,5 @@
 package org.example;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,48 +17,52 @@ class UserTest {
     public static final String CORRECT_CREDENTIALS = "Credentials are correct!";
     public static final String NOT_CORRECT_MESSAGE = "Mandatory fields!";
 
-    private final User out = new User();
-
-    @Test
-    void shouldReturnCorrectLogin() {
-        String result = out.getLogin(CORRECT_LOGIN);
-        Assertions.assertTrue(result.contains(CORRECT_LOGIN), result);
-    }
-
-    @Test
-    void shouldReturnDefaultMessageNotCorrectLogin() {
-        String result = out.getLogin(NOT_CORRECT_LOGIN);
-        Assertions.assertTrue(result.contains(NOT_CORRECT_LOGIN_MESSAGE), result);
-    }
-
 
     @Test
     void shouldReturnDefaultMessageWhenEmailAndPasswordIsNotEmpty() {
+        User out = new User(CORRECT_LOGIN, CORRECT_PASSWORD);
         String result = out.getCredentials("email", "pwd");
-        Assertions.assertTrue(result.equals(CORRECT_CREDENTIALS), result);
+        assertTrue(result.equals(CORRECT_CREDENTIALS), result);
     }
 
     @Test
-    void shouldReturnDefaultMessageWhenEmailOeLoginIsNull() {
+    void shouldReturnDefaultMessageWhenEmailOrLoginIsNull() {
+        User out = new User(CORRECT_LOGIN, CORRECT_PASSWORD);
         String result = out.getCredentials(null, null);
-        Assertions.assertTrue(result.equals(NOT_CORRECT_MESSAGE), result);
+        assertTrue(result.equals(NOT_CORRECT_MESSAGE), result);
     }
 
     @Test
-    void shouldReturnDefaultMessageWhenEmailOeLoginIsEmpty() {
+    void shouldReturnDefaultMessageWhenEmailOrLoginIsEmpty() {
+        User out = new User(CORRECT_LOGIN, CORRECT_PASSWORD);
         String result = out.getCredentials(EMPTY_LOGIN, EMPTY_PASSWORD);
-        Assertions.assertTrue(result.equals(NOT_CORRECT_MESSAGE), result);
+        assertTrue(result.equals(NOT_CORRECT_MESSAGE), result);
     }
 
     @Test
-    void shouldReturnPasswordNotEqualsLogin() {
-        String result = out.getPassword(CORRECT_PASSWORD, CORRECT_LOGIN);
-        Assertions.assertTrue(result.equals(CORRECT_PASSWORD));
+    void shouldReturnCorrectLogin() {
+        User out1 = new User(CORRECT_LOGIN);
+        String result = out1.getLogin();
+        assertTrue(result.equals(CORRECT_LOGIN));
     }
 
     @Test
-    void shouldReturnDefaultMessagePasswordAndLoginAreEquals() {
-        String result = out.getPassword(PASSWORD_EQUALS_LOGIN, CORRECT_LOGIN);
-        Assertions.assertTrue(result.equals(NOT_CORRECT_PASSWORD_MESSAGE));
+    void shouldReturnExceptionMessageNotCorrectLogin() {
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+                    User out = new User(NOT_CORRECT_LOGIN);
+                    out.getLogin();
+                }
+        );
+        assertEquals(NOT_CORRECT_LOGIN_MESSAGE, exception.getMessage());
+    }
+
+    @Test
+    void shouldReturnExceptionMessagePasswordIsEqualLogin() {
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+                    User out = new User(CORRECT_LOGIN, PASSWORD_EQUALS_LOGIN);
+                    out.getPassword();
+                }
+        );
+        assertEquals(NOT_CORRECT_PASSWORD_MESSAGE, exception.getMessage());
     }
 }
